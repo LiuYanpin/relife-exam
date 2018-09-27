@@ -15,7 +15,12 @@ public class RelifeApp implements RelifeAppHandler {
     @Override
     public RelifeResponse process(RelifeRequest request) {
         // TODO: You can start here
-        RelifeResponse response = this.handler.process(request);
+        RelifeResponse response = null;
+        try {
+            response = this.handler.process(request);
+        } catch (Exception e) {
+            response = new RelifeResponse(500);
+        }
         return response;
     }
 }
