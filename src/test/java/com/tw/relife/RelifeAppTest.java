@@ -68,6 +68,27 @@ class RelifeAppTest {
         assertEquals(200, response.getStatus());
         assertEquals("Hello", response.getContent());
     }
+    @Test
+    void should_get_exception_if_path_or_method_is_unmatched() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addAction(
+                        "/path",
+                        RelifeMethod.GET,
+                        request -> new RelifeResponse(200, "World", "text/plain"))
+                .build();
+
+        RelifeApp app = new RelifeApp(handler);
+
+        RelifeResponse response1 = app.process(
+                new RelifeRequest("/path/string", RelifeMethod.GET));
+        assertEquals(404, response1.getStatus());
+
+        RelifeResponse response2 = app.process(
+                new RelifeRequest("/path", RelifeMethod.POST));
+        assertEquals(404, response2.getStatus());
+    }
+
+
 }
 
 

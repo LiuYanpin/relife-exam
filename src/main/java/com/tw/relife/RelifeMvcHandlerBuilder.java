@@ -21,9 +21,8 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
         RelifeResponse response;
         ValueHolder<RelifeResponse> responseValueHolder = new ValueHolder();
         responseValueHolder.setValue(new RelifeResponse(404));
-
         actions.forEach(item -> {
-            if (request.getPath().equals(item.getPath()) && request.getMethod().equals(item.getMethod())) {
+            if (item.getPath().equals(request.getPath()) && item.getMethod().equals(request.getMethod())) {
                 responseValueHolder.setValue(item.getHandler().process(request));
             }
         });
