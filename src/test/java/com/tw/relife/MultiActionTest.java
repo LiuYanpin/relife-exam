@@ -1,5 +1,6 @@
 package com.tw.relife;
 
+import com.tw.relife.controller.OneActionController;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,5 +48,16 @@ public class MultiActionTest {
 
     }
 
+    @Test
+    void should_bind_request_on_controller_with_action() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addController(OneActionController.class)
+                .build();
+        RelifeApp app = new RelifeApp(handler);
+        RelifeRequest getRequest = new RelifeRequest("/path", RelifeMethod.GET);
+        RelifeResponse getResponse = app.process(getRequest);
+        assertEquals(200, getResponse.getStatus());
+        assertEquals("Hello from /path", getResponse.getContent());
 
+    }
 }

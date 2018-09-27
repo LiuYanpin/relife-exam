@@ -1,6 +1,5 @@
 package com.tw.relife;
 
-import com.tw.relife.exception.RelifeStatusCode;
 import com.tw.relife.exception.SampleNotFoundException;
 import org.junit.jupiter.api.Test;
 
