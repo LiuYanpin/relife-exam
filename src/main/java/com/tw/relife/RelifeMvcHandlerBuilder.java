@@ -8,8 +8,12 @@ import java.util.List;
 
 public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
     private List<Action> actions = new ArrayList<>();
+    private boolean buildFlag = false;
 
     public RelifeMvcHandlerBuilder addAction(String path, RelifeMethod method, RelifeAppHandler handler) {
+        if (buildFlag) {
+            return null;
+        }
         if (path == null || method == null || handler == null) {
             throw new IllegalArgumentException();
         }
@@ -17,6 +21,7 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
         return this;
     }
     public RelifeAppHandler build() {
+        buildFlag = true;
         return this;
     }
     @Override
