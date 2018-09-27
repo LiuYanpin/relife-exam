@@ -6,6 +6,7 @@ import com.tw.relife.domain.Action;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
     }
 
     public RelifeMvcHandlerBuilder addController(Class controllerClass) {
-        if (controllerClass == null) {
+        if (controllerClass == null || controllerClass.isInterface() || Modifier.isAbstract(controllerClass.getModifiers())) {
             throw new IllegalArgumentException();
         }
         Method[] methods = controllerClass.getDeclaredMethods();

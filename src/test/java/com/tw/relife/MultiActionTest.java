@@ -1,6 +1,8 @@
 package com.tw.relife;
 
 import com.tw.relife.controller.OneActionController;
+import com.tw.relife.testClass.AbstractClass;
+import com.tw.relife.testClass.InterfaceClass;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,4 +68,9 @@ public class MultiActionTest {
         assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder().addController(null));
     }
 
+    @Test
+    void should_throw_exception_if_controller_is_abstract_or_interface() {
+        assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder().addController(AbstractClass.class));
+        assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder().addController(InterfaceClass.class));
+    }
 }
