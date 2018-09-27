@@ -121,7 +121,17 @@ public class MultiActionTest {
 
         assertEquals(getResponse2.getStatus(), getResponse3.getStatus());
         assertEquals(getResponse2.getContent(), getResponse3.getContent());
+    }
 
+    @Test
+    void should_get_status_code_if_action_throw_exception() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addController(OneActionWithExceptionController.class)
+                .build();
+        RelifeApp app = new RelifeApp(handler);
+        RelifeRequest getRequest = new RelifeRequest("/path", RelifeMethod.GET);
+        RelifeResponse getResponse = app.process(getRequest);
 
+        assertEquals(500, getResponse.getStatus());
     }
 }
