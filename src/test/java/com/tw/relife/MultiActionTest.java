@@ -4,6 +4,7 @@ import com.tw.relife.controller.OneActionController;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MultiActionTest {
     @Test
@@ -58,6 +59,11 @@ public class MultiActionTest {
         RelifeResponse getResponse = app.process(getRequest);
         assertEquals(200, getResponse.getStatus());
         assertEquals("Hello from /path", getResponse.getContent());
-
     }
+
+    @Test
+    void should_throw_exception_if_controller_is_null() {
+        assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder().addController(null));
+    }
+
 }

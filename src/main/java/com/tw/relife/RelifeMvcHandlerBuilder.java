@@ -32,6 +32,9 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
     }
 
     public RelifeMvcHandlerBuilder addController(Class controllerClass) {
+        if (controllerClass == null) {
+            throw new IllegalArgumentException();
+        }
         Method[] methods = controllerClass.getDeclaredMethods();
         for (Method method: methods) {
             method.setAccessible(true);
