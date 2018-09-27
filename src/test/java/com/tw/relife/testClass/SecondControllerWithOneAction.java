@@ -9,9 +9,9 @@ import com.tw.relife.annotation.RelifeRequestMapping;
 @RelifeController
 public class SecondControllerWithOneAction {
     @RelifeRequestMapping(value = "/path", method = RelifeMethod.POST)
-    public RelifeResponse firstMethod(RelifeRequest request) {
+    public RelifeResponse secondMethod(RelifeRequest request) {
         return new RelifeResponse(
-                200,
+                403,
                 "method form second controller",
                 "text/plain"
         );

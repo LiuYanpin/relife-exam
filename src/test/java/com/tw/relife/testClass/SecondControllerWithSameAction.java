@@ -7,12 +7,12 @@ import com.tw.relife.annotation.RelifeController;
 import com.tw.relife.annotation.RelifeRequestMapping;
 
 @RelifeController
-public class FirstControllerWithSameAction {
+public class SecondControllerWithSameAction {
     @RelifeRequestMapping(value = "/path", method = RelifeMethod.GET)
     public RelifeResponse firstMethod(RelifeRequest request) {
         return new RelifeResponse(
-                200,
-                "action form first controller",
+                403,
+                "action form second controller",
                 "text/plain"
         );
     }

@@ -85,6 +85,7 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
         }else {
             try {
                 Method method = action.getMethodName();
+                System.out.println(method.getDeclaringClass().getName());
                 relifeResponse = (RelifeResponse) method.invoke(method.getDeclaringClass().newInstance(), request);
                 if (relifeResponse == null) {
                     relifeResponse =  new RelifeResponse(200);

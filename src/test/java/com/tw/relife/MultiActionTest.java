@@ -142,15 +142,37 @@ public class MultiActionTest {
                 .addController(SecondControllerWithOneAction.class)
                 .build();
         RelifeApp app = new RelifeApp(handler);
+
         RelifeRequest getRequest = new RelifeRequest("/path", RelifeMethod.GET);
         RelifeResponse getResponse = app.process(getRequest);
+        RelifeRequest postRequest = new RelifeRequest("/path", RelifeMethod.POST);
+        RelifeResponse postResponse = app.process(postRequest);
 
         assertEquals(200, getResponse.getStatus());
         assertEquals("method form first controller", getResponse.getContent());
+        assertEquals(403, postResponse.getStatus());
+        assertEquals("method form second controller", postResponse.getContent());
+
     }
 
     @Test
     void should_get_first_action_add_many_controller_if_controllers_have_same_action() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addController(FirstControllerWithSameAction.class)
+                .addController(SecondControllerWithSameAction.class)
+                .build();
+        RelifeApp app = new RelifeApp(handler);
+        RelifeRequest getRequest1 = new RelifeRequest("/path", RelifeMethod.GET);
+        RelifeResponse getResponse1 = app.process(getRequest1);
+        assertEquals(200, getResponse1.getStatus());
+        assertEquals("action form first controller", getResponse1.getContent());
+
+        RelifeRequest getRequest2 = new RelifeRequest("/path", RelifeMethod.GET);
+        RelifeResponse getResponse2 = app.process(getRequest2);
+        assertEquals(200, getResponse2.getStatus());
+        assertEquals("action form first controller", getResponse2.getContent());
+
+
 
     }
 }
