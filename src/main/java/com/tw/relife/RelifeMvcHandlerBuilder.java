@@ -1,5 +1,6 @@
 package com.tw.relife;
 
+import com.tw.relife.annotation.RelifeController;
 import com.tw.relife.annotation.RelifeRequestMapping;
 import com.tw.relife.domain.Action;
 
@@ -33,9 +34,7 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
     }
 
     public RelifeMvcHandlerBuilder addController(Class controllerClass) {
-        if (controllerClass == null || controllerClass.isInterface() || Modifier.isAbstract(controllerClass.getModifiers())) {
-            throw new IllegalArgumentException();
-        }
+        judgeIllegalController(controllerClass);
         Method[] methods = controllerClass.getDeclaredMethods();
         for (Method method: methods) {
             method.setAccessible(true);
@@ -47,6 +46,17 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
         }
         controllers.add(controllerClass);
         return this;
+    }
+
+    private void judgeIllegalController(Class controllerClass) {
+        if (controllerClass == null
+                || controllerClass.isInterface()
+                || Modifier.isAbstract(controllerClass.getModifiers())
+                || controllerClass.getAnnotation(RelifeController.class) == null
+        ) {
+            throw new IllegalArgumentException();
+        }
+
     }
 
     @Override
