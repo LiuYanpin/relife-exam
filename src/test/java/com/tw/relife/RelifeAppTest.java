@@ -88,7 +88,17 @@ class RelifeAppTest {
         assertEquals(404, response2.getStatus());
     }
 
+    @Test
+    void should_throw_exception_if_one_of_add_action_parameters_is_null() {
+        assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder()
+                .addAction(null, RelifeMethod.GET, request -> new RelifeResponse(200)));
 
+        assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder()
+                .addAction("/path", null, request -> new RelifeResponse(200)));
+
+        assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder()
+                .addAction("/path", RelifeMethod.GET, null));
+    }
 }
 
 

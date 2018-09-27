@@ -10,6 +10,9 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
     private List<Action> actions = new ArrayList<>();
 
     public RelifeMvcHandlerBuilder addAction(String path, RelifeMethod method, RelifeAppHandler handler) {
+        if (path == null || method == null || handler == null) {
+            throw new IllegalArgumentException();
+        }
         actions.add(new Action(path, method, handler));
         return this;
     }
