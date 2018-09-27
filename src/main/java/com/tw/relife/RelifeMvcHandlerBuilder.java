@@ -1,15 +1,16 @@
 package com.tw.relife;
 
+import com.tw.relife.domain.Action;
+import com.tw.relife.domain.ValueHolder;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
-    private RelifeResponse response;
-    private RelifeAppHandler handler;
-    private RelifeRequest request;
-
-
+    private List<Action> actions = new ArrayList<>();
 
     public RelifeMvcHandlerBuilder addAction(String path, RelifeMethod method, RelifeAppHandler handler) {
-        this.request = new RelifeRequest(path, method);
-        this.handler = handler;
+        actions.add(new Action(path, method, handler));
         return this;
     }
     public RelifeAppHandler build() {
@@ -17,6 +18,16 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
     }
     @Override
     public RelifeResponse process(RelifeRequest request) {
-        return this.response = handler.process(request);
+        RelifeResponse response;
+        ValueHolder<RelifeResponse> responseValueHolder = new ValueHolder();
+        responseValueHolder.setValue(new RelifeResponse(404));
+
+        actions.forEach(item -> {
+            if (request.getPath().equals(item.getPath()) && request.getMethod().equals(item.getMethod())) {
+                responseValueHolder.setValue(item.getHandler().process(request));
+            }
+        });
+        return responseValueHolder.getValue();
+
     }
 }
