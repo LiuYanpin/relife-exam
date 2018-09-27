@@ -81,6 +81,47 @@ public class MultiActionTest {
     void should_throw_exception_if_controller_action_has_more_than_one_parameter_or_wrong_type() {
         assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder().addController(ActionHasManyParametersController.class));
         assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder().addController(ActionParameterWrongTypeController.class));
+    }
+
+    @Test
+    void should_distinguish_different_actions() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addController(TwoDifferentActionController.class)
+                .build();
+        RelifeApp app = new RelifeApp(handler);
+        RelifeRequest getRequest = new RelifeRequest("/path", RelifeMethod.GET);
+        RelifeRequest postRequest = new RelifeRequest("/path", RelifeMethod.POST);
+
+        RelifeResponse getResponse = app.process(getRequest);
+        RelifeResponse postResponse = app.process(postRequest);
+
+        assertEquals(403, getResponse.getStatus());
+        assertEquals("get action", getResponse.getContent());
+
+        assertEquals(200, postResponse.getStatus());
+        assertEquals("post action", postResponse.getContent());
+    }
+
+    @Test
+    void should_get_same_action_if_controller_has_multi_action() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addController(TwoDifferentActionController.class)
+                .build();
+        RelifeApp app = new RelifeApp(handler);
+        RelifeRequest getRequest1 = new RelifeRequest("/path", RelifeMethod.GET);
+        RelifeRequest getRequest2 = new RelifeRequest("/path", RelifeMethod.GET);
+        RelifeRequest getRequest3 = new RelifeRequest("/path", RelifeMethod.GET);
+
+        RelifeResponse getResponse1 = app.process(getRequest1);
+        RelifeResponse getResponse2 = app.process(getRequest2);
+        RelifeResponse getResponse3 = app.process(getRequest3);
+
+        assertEquals(getResponse1.getStatus(), getResponse2.getStatus());
+        assertEquals(getResponse1.getContent(), getResponse2.getContent());
+
+        assertEquals(getResponse2.getStatus(), getResponse3.getStatus());
+        assertEquals(getResponse2.getContent(), getResponse3.getContent());
+
 
     }
 }
