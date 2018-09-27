@@ -4,8 +4,6 @@ import com.tw.relife.annotation.RelifeController;
 import com.tw.relife.annotation.RelifeRequestMapping;
 import com.tw.relife.domain.Action;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -13,7 +11,6 @@ import java.util.List;
 
 public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
     private List<Action> actions = new ArrayList<>();
-    private List<Class> controllers = new ArrayList<>();
 
     private boolean buildFlag = false;
 
@@ -44,7 +41,6 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
             }
             method.setAccessible(false);
         }
-        controllers.add(controllerClass);
         return this;
     }
 
@@ -63,39 +59,41 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
                 throw new IllegalArgumentException();
             }
         }
-
-
     }
+
+
 
     @Override
     public RelifeResponse process(RelifeRequest request) {
         RelifeResponse response = actions.stream()
                 .filter(item -> item.getPath().equals(request.getPath()) && item.getMethod().equals(request.getMethod()))
                 .findFirst()
-                .map(action -> {
-                    RelifeResponse relifeResponse;
-                    if (action.getHandler() != null) {
-                        relifeResponse = action.getHandler().process(request);
-                        if (relifeResponse == null) {
-                            relifeResponse =  new RelifeResponse(200);
-                        }
-                    }else {
-                        try {
-                            Method method = action.getMethodName();
-                            relifeResponse = (RelifeResponse) method.invoke(method.getDeclaringClass().newInstance(), request);
-                            if (relifeResponse == null) {
-                                relifeResponse =  new RelifeResponse(200);
-                            }
-                        }catch (Exception e) {
-                            relifeResponse = new RelifeResponse(500);
-                        }
-                    }
-                    return relifeResponse;
-                })
+                .map(action -> getRelifeResponse(request, action))
                 .orElse(new RelifeResponse(404));
 
         return response;
 
+    }
+
+    private RelifeResponse getRelifeResponse(RelifeRequest request, Action action) {
+        RelifeResponse relifeResponse;
+        if (action.getHandler() != null) {
+            relifeResponse = action.getHandler().process(request);
+            if (relifeResponse == null) {
+                relifeResponse =  new RelifeResponse(200);
+            }
+        }else {
+            try {
+                Method method = action.getMethodName();
+                relifeResponse = (RelifeResponse) method.invoke(method.getDeclaringClass().newInstance(), request);
+                if (relifeResponse == null) {
+                    relifeResponse =  new RelifeResponse(200);
+                }
+            }catch (Exception e) {
+                relifeResponse = new RelifeResponse(500);
+            }
+        }
+        return relifeResponse;
     }
 
 }

@@ -134,4 +134,23 @@ public class MultiActionTest {
 
         assertEquals(500, getResponse.getStatus());
     }
+
+    @Test
+    void should_add_many_controller_and_differ_different_actions_in_controller() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addController(FirstControllerWithOneAction.class)
+                .addController(SecondControllerWithOneAction.class)
+                .build();
+        RelifeApp app = new RelifeApp(handler);
+        RelifeRequest getRequest = new RelifeRequest("/path", RelifeMethod.GET);
+        RelifeResponse getResponse = app.process(getRequest);
+
+        assertEquals(200, getResponse.getStatus());
+        assertEquals("method form first controller", getResponse.getContent());
+    }
+
+    @Test
+    void should_get_first_action_add_many_controller_if_controllers_have_same_action() {
+
+    }
 }
