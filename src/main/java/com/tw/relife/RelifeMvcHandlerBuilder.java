@@ -5,6 +5,7 @@ import com.tw.relife.domain.ValueHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
     private List<Action> actions = new ArrayList<>();
@@ -12,7 +13,7 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
 
     public RelifeMvcHandlerBuilder addAction(String path, RelifeMethod method, RelifeAppHandler handler) {
         if (buildFlag) {
-            return null;
+            throw new IllegalArgumentException("can't add action");
         }
         if (path == null || method == null || handler == null) {
             throw new IllegalArgumentException();
@@ -20,25 +21,27 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
         actions.add(new Action(path, method, handler));
         return this;
     }
+
     public RelifeAppHandler build() {
         buildFlag = true;
         return this;
     }
     @Override
     public RelifeResponse process(RelifeRequest request) {
-        ValueHolder<RelifeResponse> responseValueHolder = new ValueHolder();
-        responseValueHolder.setValue(new RelifeResponse(404));
-        actions.forEach(item -> {
-            if (item.getPath().equals(request.getPath()) && item.getMethod().equals(request.getMethod())) {
-                RelifeResponse response = item.getHandler().process(request);
-                if (response == null) {
-                    responseValueHolder.setValue(new RelifeResponse(200));
-                }else {
-                    responseValueHolder.setValue(response);
-                }
-            }
-        });
-        return responseValueHolder.getValue();
+
+        RelifeResponse response = actions.stream()
+                .filter(item -> item.getPath().equals(request.getPath()) && item.getMethod().equals(request.getMethod()))
+                .findFirst()
+                .map(action -> {
+                    RelifeResponse relifeResponse = action.getHandler().process(request);
+                    if (relifeResponse == null) {
+                        relifeResponse =  new RelifeResponse(200);
+                    }
+                    return relifeResponse;
+                })
+                .orElse(new RelifeResponse(404));
+
+        return response;
 
     }
 }
