@@ -9,6 +9,7 @@ public class RelifeApp implements RelifeAppHandler {
             throw new IllegalArgumentException();
         }
         this.handler = handler;
+
     }
 
     @Override
