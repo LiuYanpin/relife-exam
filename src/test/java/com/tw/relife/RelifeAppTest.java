@@ -4,9 +4,7 @@ import com.tw.relife.exception.RelifeStatusCode;
 import com.tw.relife.exception.SampleNotFoundException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RelifeAppTest {
     @Test
@@ -98,6 +96,21 @@ class RelifeAppTest {
 
         assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder()
                 .addAction("/path", RelifeMethod.GET, null));
+    }
+
+    @Test
+    void should_get_response_of_200_if_handler_return_null() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addAction("/path", RelifeMethod.GET, request -> null)
+                .build();
+
+        RelifeApp app = new RelifeApp(handler);
+
+        RelifeResponse response = app.process(
+                new RelifeRequest("/path", RelifeMethod.GET));
+        assertEquals(200, response.getStatus());
+        assertNull(response.getContent());
+
     }
 }
 
