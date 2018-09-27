@@ -57,6 +57,14 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
             throw new IllegalArgumentException();
         }
 
+        Method[] methods = controllerClass.getDeclaredMethods();
+        for (Method method: methods) {
+            if (method.getParameterCount() != 1 || !method.getParameterTypes()[0].equals(RelifeRequest.class)) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+
     }
 
     @Override

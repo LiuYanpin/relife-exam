@@ -1,9 +1,6 @@
 package com.tw.relife;
 
-import com.tw.relife.controller.OneActionController;
-import com.tw.relife.testClass.AbstractClass;
-import com.tw.relife.testClass.ControllerWithoutAnnotation;
-import com.tw.relife.testClass.InterfaceClass;
+import com.tw.relife.testClass.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,7 +73,14 @@ public class MultiActionTest {
     }
 
     @Test
-    void should_throw_exception_if_controller_without_annotation() {
+    void should_throw_exception_if_controller_without_proper_annotation() {
         assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder().addController(ControllerWithoutAnnotation.class));
+    }
+
+    @Test
+    void should_throw_exception_if_controller_action_has_more_than_one_parameter_or_wrong_type() {
+        assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder().addController(ActionHasManyParametersController.class));
+        assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder().addController(ActionParameterWrongTypeController.class));
+
     }
 }

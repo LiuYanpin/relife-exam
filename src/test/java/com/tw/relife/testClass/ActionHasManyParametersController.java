@@ -1,4 +1,4 @@
-package com.tw.relife.controller;
+package com.tw.relife.testClass;
 
 import com.tw.relife.RelifeMethod;
 import com.tw.relife.RelifeRequest;
@@ -7,9 +7,9 @@ import com.tw.relife.annotation.RelifeController;
 import com.tw.relife.annotation.RelifeRequestMapping;
 
 @RelifeController
-public class OneActionController {
+public class ActionHasManyParametersController {
     @RelifeRequestMapping(value = "/path", method = RelifeMethod.GET)
-    public RelifeResponse sayHello(RelifeRequest request) {
+    public RelifeResponse sayHello(RelifeRequest request, RelifeRequest request2) {
         return new RelifeResponse(
                 200,
                 "Hello from " + request.getPath(),
