@@ -112,6 +112,35 @@ class RelifeAppTest {
         assertNull(response.getContent());
 
     }
+
+    @Test
+    void should_be_compatible_of_exception() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new RelifeApp(null);
+        });
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addAction("/path", RelifeMethod.GET, request -> {
+                    throw new RuntimeException("error occurred");
+                }).build();
+        RelifeApp app = new RelifeApp(handler);
+        RelifeResponse response = app.process(
+                new RelifeRequest("/path", RelifeMethod.GET));
+        assertEquals(500, response.getStatus());
+    }
+
+    @Test
+    void should_be_compatible_of_exception_from_annotation() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addAction("/path", RelifeMethod.GET, request -> {
+                    throw new SampleNotFoundException();
+                }).build();
+        RelifeApp app = new RelifeApp(handler);
+        RelifeRequest request = new RelifeRequest(
+                "/path", RelifeMethod.GET
+        );
+        RelifeResponse response = app.process(request);
+        assertEquals(404, response.getStatus());
+    }
 }
 
 
