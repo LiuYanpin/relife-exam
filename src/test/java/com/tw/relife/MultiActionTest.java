@@ -179,4 +179,28 @@ public class MultiActionTest {
                 .addController(FirstControllerWithSameAction.class)
                 .addController(FirstControllerWithSameAction.class));
     }
+
+    @Test
+    void should_serialize_return_object_to_json() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addController(ControllerWithPojoReturnAction.class)
+                .build();
+        RelifeApp app = new RelifeApp(handler);
+
+        RelifeResponse response = app.process(new RelifeRequest("/path", RelifeMethod.POST));
+        assertEquals(200, response.getStatus());
+        assertEquals("{\"name\":\"liuyanping\",\"age\":18}", response.getContent());
+        assertEquals("application/json", response.getContentType());
+    }
+
+    @Test
+    void should_serialize_return_object_if_null() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addController(ControllerWithPojoReturnAction.class)
+                .build();
+        RelifeApp app = new RelifeApp(handler);
+
+        RelifeResponse response = app.process(new RelifeRequest("/path", RelifeMethod.GET));
+        assertEquals(200, response.getStatus());
+    }
 }

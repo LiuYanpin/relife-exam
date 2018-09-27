@@ -1,5 +1,6 @@
 package com.tw.relife;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.relife.annotation.RelifeController;
 import com.tw.relife.annotation.RelifeRequestMapping;
 import com.tw.relife.domain.Action;
@@ -68,8 +69,6 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
         }
     }
 
-
-
     @Override
     public RelifeResponse process(RelifeRequest request) {
         RelifeResponse response = actions.stream()
@@ -92,10 +91,16 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
         }else {
             try {
                 Method method = action.getMethodName();
-                relifeResponse = (RelifeResponse) method.invoke(method.getDeclaringClass().newInstance(), request);
-                if (relifeResponse == null) {
-                    relifeResponse =  new RelifeResponse(200);
+                method.setAccessible(true);
+                Object invokeResult = method.invoke(method.getDeclaringClass().newInstance(), request);
+                if (invokeResult == null) {
+                    relifeResponse = new RelifeResponse(200);
+                }else if (invokeResult.getClass().equals(RelifeResponse.class)) {
+                    relifeResponse = (RelifeResponse) invokeResult;
+                }else {
+                    relifeResponse = new RelifeResponse(200, new ObjectMapper().writeValueAsString(invokeResult), "application/json");
                 }
+                method.setAccessible(false);
             }catch (Exception e) {
                 relifeResponse = new RelifeResponse(500);
             }
