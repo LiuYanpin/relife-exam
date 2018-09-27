@@ -171,8 +171,12 @@ public class MultiActionTest {
         RelifeResponse getResponse2 = app.process(getRequest2);
         assertEquals(200, getResponse2.getStatus());
         assertEquals("action form first controller", getResponse2.getContent());
+    }
 
-
-
+    @Test
+    void should_throw_exception_if_add_same_controller() {
+        assertThrows(IllegalArgumentException.class, () -> new RelifeMvcHandlerBuilder()
+                .addController(FirstControllerWithSameAction.class)
+                .addController(FirstControllerWithSameAction.class));
     }
 }

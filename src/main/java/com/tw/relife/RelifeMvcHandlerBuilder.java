@@ -7,11 +7,13 @@ import com.tw.relife.domain.Action;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
     private List<Action> actions = new ArrayList<>();
-
+    private Set<Class> controllers = new HashSet<>();
     private boolean buildFlag = false;
 
     public RelifeMvcHandlerBuilder addAction(String path, RelifeMethod method, RelifeAppHandler handler) {
@@ -41,6 +43,7 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
             }
             method.setAccessible(false);
         }
+        controllers.add(controllerClass);
         return this;
     }
 
@@ -58,6 +61,10 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
             if (method.getParameterCount() != 1 || !method.getParameterTypes()[0].equals(RelifeRequest.class)) {
                 throw new IllegalArgumentException();
             }
+        }
+
+        if (controllers.contains(controllerClass)) {
+            throw new IllegalArgumentException();
         }
     }
 
@@ -85,7 +92,6 @@ public class RelifeMvcHandlerBuilder implements RelifeAppHandler{
         }else {
             try {
                 Method method = action.getMethodName();
-                System.out.println(method.getDeclaringClass().getName());
                 relifeResponse = (RelifeResponse) method.invoke(method.getDeclaringClass().newInstance(), request);
                 if (relifeResponse == null) {
                     relifeResponse =  new RelifeResponse(200);
