@@ -1,5 +1,6 @@
 package com.tw.relife;
 
+import com.tw.relife.exception.RelifeStatusCode;
 import com.tw.relife.exception.SampleNotFoundException;
 import org.junit.jupiter.api.Test;
 
@@ -48,6 +49,24 @@ class RelifeAppTest {
         RelifeResponse response = app.process(whateverRequest);
 
         assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    void should_bind_request_to_action() {
+        RelifeAppHandler handler = new RelifeMvcHandlerBuilder()
+                .addAction(
+                        "/path",
+                        RelifeMethod.GET,
+                        request -> new RelifeResponse(200, "Hello", "text/plain"))
+                .build();
+
+        RelifeApp app = new RelifeApp(handler);
+
+        RelifeResponse response = app.process(
+                new RelifeRequest("/path", RelifeMethod.GET));
+
+        assertEquals(200, response.getStatus());
+        assertEquals("Hello", response.getContent());
     }
 }
 
